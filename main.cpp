@@ -48,6 +48,32 @@ int main()
     spriteBee.setTexture(textureBee);
     spriteBee.setPosition(0,800);
 
+    bool beeActive = false; // is the bee moving?
+    float beeSpeed = 0.0f; 
+
+    // prepare the clouds
+    sf::Texture textureCloud;
+    textureCloud.loadFromFile("graphics/cloud.png");
+
+    // cloud sprites from a single texture
+    sf::Sprite spriteCloud1, spriteCloud2, spriteCloud3;
+    spriteCloud1.setTexture(textureCloud);
+    spriteCloud2.setTexture(textureCloud);
+    spriteCloud3.setTexture(textureCloud);
+
+    // position the clouds at different heights
+    spriteCloud1.setPosition(0,0);
+    spriteCloud2.setPosition(0,250);
+    spriteCloud3.setPosition(0,500);
+
+    // are the clouds currently on the screen
+    bool cloud1Active, cloud2Active, cloud3Acitve;
+
+    // how fast is each cloud
+    float cloud1speed = 0.0f;
+    float cloud2speed = 0.0f;
+    float cloud3speed = 0.0f;
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -75,6 +101,9 @@ int main()
         window.draw(spriteBackground);
         window.draw(spriteTree);
         window.draw(spriteBee);
+        window.draw(spriteCloud1);
+        window.draw(spriteCloud2);
+        window.draw(spriteCloud3);
 
         // show everything we drew
         window.display();
