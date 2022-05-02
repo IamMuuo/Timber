@@ -81,6 +81,9 @@ int main()
     // clock to get the frame rate
     sf::Clock clock;
 
+    // track pause
+    bool paused = true;
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -91,11 +94,18 @@ int main()
             window.close(); // close the window
         }
 
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+        {
+            paused = false;
+        }
+
 
         /***********************************************
         *   Update the game scenes
         ***********************************************/
-        sf::Time dt = clock.restart();
+        if (!paused)
+        {
+                    sf::Time dt = clock.restart();
 
         // setup the bee
         if(!beeActive)
@@ -191,7 +201,8 @@ int main()
             spriteCloud3.setPosition(-200,height);
             cloud3Acitve = true;
         }
-        else {
+        else 
+        {
             spriteCloud3.setPosition(
                 spriteCloud3.getPosition().x +
                 (cloud3speed * dt.asSeconds()),
@@ -202,6 +213,7 @@ int main()
             {
                 cloud3Acitve = false;
             }
+        }
         }
 
 
