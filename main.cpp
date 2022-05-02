@@ -11,9 +11,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <cstddef>
+#include <cstdlib>
 
 int main()
 {
@@ -74,6 +78,9 @@ int main()
     float cloud2speed = 0.0f;
     float cloud3speed = 0.0f;
 
+    // clock to get the frame rate
+    sf::Clock clock;
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -88,6 +95,34 @@ int main()
         /***********************************************
         *   Update the game scenes
         ***********************************************/
+        sf::Time dt = clock.restart();
+
+        // setup the bee
+        if(!beeActive)
+        {
+            // how fast is the bee
+            srand((int)time(NULL));
+            beeSpeed = (rand() % 200) + 200;
+            // how high is the bee
+            srand((int)time(NULL) * 10);
+            float height = (rand() % 500) + 500;
+            spriteBee.setPosition(2000,height);
+            beeActive = true;
+        }
+        else {
+            // move the bee
+            spriteBee.setPosition(
+                spriteBee.getPosition().x - 
+                (beeSpeed * dt.asSeconds()),
+                spriteBee.getPosition().y
+            );
+
+            // has the bee reached the end of the screen
+            if(spriteBee.getPosition().x < -100)
+            {
+                beeActive = false;
+            }
+        }
 
 
         /***********************************************
