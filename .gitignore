@@ -1,0 +1,6 @@
+*.o
+*.dat
+*.bak
+*.orig
+*.swp
+timber
