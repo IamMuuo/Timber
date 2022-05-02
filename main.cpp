@@ -34,6 +34,20 @@ int main()
     // set the background to cover the screen
     spriteBackground.setPosition(0,0);
 
+    // prepare the tree
+    sf::Texture textureTree;
+    textureTree.loadFromFile("graphics/tree.png");
+    sf::Sprite spriteTree;
+    spriteTree.setTexture(textureTree);
+    spriteTree.setPosition(810,0);
+
+    //prepare the bee
+    sf::Texture textureBee;
+    textureBee.loadFromFile("graphics/bee.png");
+    sf::Sprite spriteBee;
+    spriteBee.setTexture(textureBee);
+    spriteBee.setPosition(0,800);
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -59,6 +73,8 @@ int main()
 
         // draw thw game scenes
         window.draw(spriteBackground);
+        window.draw(spriteTree);
+        window.draw(spriteBee);
 
         // show everything we drew
         window.display();
