@@ -24,7 +24,18 @@
 #include <SFML/Window/WindowStyle.hpp>
 #include <cstddef>
 #include <cstdlib>
+#include <ctime>
 #include <sstream>
+
+// function prototypes
+void updateBranches(int);
+
+const int NUM_BRANCHES = 6;
+sf::Sprite branches[NUM_BRANCHES];
+
+// where is the player and branch left or right?
+enum class side {LEFT,RIGHT,NONE};
+side branchPositions[NUM_BRANCHES];
 
 int main()
 {
@@ -135,9 +146,20 @@ int main()
     timeBar.setPosition((1920/2) - timeBarStartWidth/2, 1060);
 
     sf::Time gameTimeTotal;
-    float timeRemaining = 6.0f;
+    float timeRemaining = 10.0f;
     float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
 
+    // prepare the branches
+    sf::Texture textureBranch;
+    textureBranch.loadFromFile("graphics/branch.png");
+
+    // set the texture for each branch
+    for(std::size_t i = 0; i<NUM_BRANCHES; ++i)
+    {
+        branches[i].setTexture(textureBranch);
+        branches[i].setPosition(-2000,-2000);
+        branches[i].setOrigin(220,20);
+    }
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -152,7 +174,7 @@ int main()
         {
             paused = false;
             score = 0;
-            timeRemaining = 6;
+            timeRemaining = 10;
         }
 
 
@@ -288,6 +310,34 @@ int main()
             std::stringstream ss;
             ss << "Score = " << score;
             scoreText.setString(ss.str());
+
+            // update the branch sprites
+            for(std::size_t i =0;i<NUM_BRANCHES;++i)
+            {
+                float height = i * 150;
+
+                if(branchPositions[i] == side::LEFT)
+                {
+                    // move the sprite to the left side
+                    branches[i].setPosition(610,height);
+
+                    // flip the sprite round the other way
+                    branches[i].setRotation(180);
+                }
+                else if (branchPositions[i] == side::RIGHT) 
+                {
+                    // move the sprite to the right side
+                    branches[i].setPosition(1330,height);
+
+                    // dont rotate the sprite
+                    branches[i].setRotation(0);
+                }
+                else  
+                {
+                    // hide the branch
+                    branches[i].setPosition(3000,height);
+                }
+            }
         }
 
 
@@ -300,13 +350,19 @@ int main()
 
         // draw thw game scenes
         window.draw(spriteBackground);
-        window.draw(spriteTree);
-        window.draw(spriteBee);
         window.draw(spriteCloud1);
         window.draw(spriteCloud2);
         window.draw(spriteCloud3);
+        window.draw(spriteTree);
+        window.draw(spriteBee);
         window.draw(scoreText);
         window.draw(timeBar);
+
+        // draw the branches
+        for(int i = 0; i < NUM_BRANCHES; i++)
+        {
+            window.draw(branches[i]);
+        }
 
         // if paused draw the pause helper
         if(paused)
@@ -316,4 +372,32 @@ int main()
         window.display();
     }
     return 0;    
+}
+
+// function definition for moving branches
+void updateBranches(int seed)
+{
+    // move the branches down by one place
+    for(std::size_t j = NUM_BRANCHES - 1; j > 0; j--)
+    {
+        branchPositions[j] = branchPositions[j - 1];
+    }
+
+    // spawn a new branch at position 0
+    // left or right or None
+    srand((int)(time(NULL))+seed);
+    int r = (rand() % 5);
+
+    switch(r)
+    {
+        case 0:
+            branchPositions[0] = side::LEFT;
+            break;
+        case 1:
+            branchPositions[0] = side::RIGHT;
+            break;
+        default:
+            branchPositions[0] = side::NONE;
+            break;
+    }
 }
