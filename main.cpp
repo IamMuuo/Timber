@@ -143,7 +143,7 @@ int main()
     float timeBarHeight = 20;
     timeBar.setSize(sf::Vector2f(timeBarStartWidth,timeBarHeight));
     timeBar.setFillColor(sf::Color::Red);
-    timeBar.setPosition((1920/2) - timeBarStartWidth/2, 1060);
+    timeBar.setPosition((1920.0/2) - timeBarStartWidth/2, 1060);
 
     sf::Time gameTimeTotal;
     float timeRemaining = 10.0f;
@@ -160,6 +160,51 @@ int main()
         branches[i].setPosition(-2000,-2000);
         branches[i].setOrigin(220,20);
     }
+
+    // prepare the player
+    sf::Texture texturePlayer;
+    texturePlayer.loadFromFile("graphics/player.png");
+    sf::Sprite spritePlayer;
+    spritePlayer.setTexture(texturePlayer);
+    spritePlayer.setPosition(580,720);
+
+    // player starts on the left
+    side playerSide = side::LEFT;
+
+    //prepare the gravestone
+    sf::Texture textureRip;
+    textureRip.loadFromFile("graphics/rip.png");
+    sf::Sprite spriteRip;
+    spriteRip.setTexture(textureRip);
+    spriteRip.setPosition(600,860);
+
+    // prepare the axe
+    sf::Texture textureAxe;
+    textureAxe.loadFromFile("graphics/axe.png");
+    sf::Sprite spriteAxe;
+    spriteAxe.setTexture(textureAxe);
+    spriteAxe.setPosition(700,830);
+
+    // line th axe with the tree
+    const float AXE_POSITION_LEFT = 700;
+    const float AXE_POSITION_RIGHT = 1075;
+
+
+    // prepare the flying log
+    sf::Texture textureLog;
+    textureLog.loadFromFile("graphics/log.png");
+    sf::Sprite spriteLog;
+    spriteLog.setTexture(textureLog);
+    spriteLog.setPosition(810,720);
+
+    bool logActive = false;
+    float logSpeedX = 1000;
+    float logSpeedY = -1500;
+
+    // handling player input
+    bool acceptInput = false;
+    
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -363,6 +408,11 @@ int main()
         {
             window.draw(branches[i]);
         }
+
+        window.draw(spritePlayer);
+        window.draw(spriteAxe);
+        window.draw(spriteLog);
+        window.draw(spriteRip);
 
         // if paused draw the pause helper
         if(paused)
