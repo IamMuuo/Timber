@@ -4,7 +4,7 @@
 *   Email:  hearterick57@gmail.com
 *
 *
-*   Emulates the clasic timber game
+*   Emulates the clasic lumberjack game
 *******************************************************/
 
 #include <SFML/Graphics.hpp>
@@ -19,6 +19,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
@@ -203,13 +204,26 @@ int main()
 
     // handling player input
     bool acceptInput = false;
-    
+
 
     while (window.isOpen()) // game main loop
     {   
         /************************************************
         *   Handle the player input
         ************************************************/
+
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if(event.type == sf::Event::KeyReleased && !paused)
+            {
+                acceptInput=true;
+
+                // hide the axe
+                spriteAxe.setPosition(2000,
+                spriteAxe.getPosition().y);
+            }
+        }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
             window.close(); // close the window
@@ -220,8 +234,75 @@ int main()
             paused = false;
             score = 0;
             timeRemaining = 10;
+
+            // make all the branches disappear
+            // start in the second position
+            for(std::size_t i =0;i<NUM_BRANCHES;i++)
+                branchPositions[i] = side::NONE;
+            
+            // hide the grave stone
+            spriteRip.setPosition(2000,2000);
+
+            // move the player into position
+            spritePlayer.setPosition(580,720);
+
+            acceptInput = true;
         }
 
+        if(acceptInput)
+        {
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                playerSide = side::RIGHT;
+                score++;
+
+                timeRemaining += (2.0f /score) + 0.15f;
+
+                spriteAxe.setPosition(AXE_POSITION_RIGHT,
+                spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(1200,720);
+
+                // update the branches
+                updateBranches(score);
+
+                // set the log to fly
+                spriteLog.setPosition(810,720);
+                logSpeedX = -5000;
+                logActive = true;
+
+                acceptInput = false;
+
+            }
+
+            // handle the left arrow key
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                playerSide = side::LEFT;
+                score++;
+
+                timeRemaining += (2.0f /score) + 0.15f;
+
+                spriteAxe.setPosition(AXE_POSITION_LEFT,
+                spriteAxe.getPosition().y);
+
+                spritePlayer.setPosition(580,720);
+
+                // update the branches
+                updateBranches(score);
+
+                // set the log to fly
+                spriteLog.setPosition(810,720);
+                logSpeedX = 5000;
+                logActive = true;
+
+                acceptInput = false;
+
+            }
+
+        }
 
         /***********************************************
         *   Update the game scenes
@@ -382,7 +463,29 @@ int main()
                     // hide the branch
                     branches[i].setPosition(3000,height);
                 }
+                
             }
+
+            // handle a flying log
+            if(logActive)
+            {
+                spriteLog.setPosition(
+                    spriteLog.getPosition().x +
+                    (logSpeedX * dt.asSeconds()),
+                    
+                    spriteLog.getPosition().y + 
+                    (logSpeedY * dt.asSeconds())
+                );
+
+                // hide the log when it reaches the end
+                if(spriteLog.getPosition().x < -100 ||
+                    spriteLog.getPosition().x > 2000)
+                    {
+                        logActive = false;
+                        spriteLog.setPosition(810,720);
+                    }
+            }
+            
         }
 
 
