@@ -7,6 +7,7 @@
 *   Emulates the clasic lumberjack game
 *******************************************************/
 
+#include <SFML/Audio/Sound.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -23,6 +24,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Audio.hpp>
 #include <cstddef>
 #include <cstdlib>
 #include <ctime>
@@ -38,8 +40,22 @@ sf::Sprite branches[NUM_BRANCHES];
 enum class side {LEFT,RIGHT,NONE};
 side branchPositions[NUM_BRANCHES];
 
+
 int main()
 {
+    // adding sounds
+    sf::SoundBuffer backgroundBuf, chopBuf, deathbuf;
+    backgroundBuf.loadFromFile("sound/background.mp3");
+    sf::Sound backgroundMusic, chop, death;
+    backgroundMusic.setBuffer(backgroundBuf);
+
+    chopBuf.loadFromFile("sound/chop.wav");
+    chop.setBuffer(chopBuf);
+
+    deathbuf.loadFromFile("sound/death.wav");
+    death.setBuffer(deathbuf);
+
+    backgroundMusic.play();
     // create a video mode object
     sf::VideoMode vm(1920,1080);
 
@@ -206,6 +222,7 @@ int main()
     bool acceptInput = false;
 
 
+
     while (window.isOpen()) // game main loop
     {   
         /************************************************
@@ -256,6 +273,7 @@ int main()
             {
                 playerSide = side::RIGHT;
                 score++;
+                chop.play();
 
                 timeRemaining += (2.0f /score) + 0.15f;
 
@@ -282,6 +300,7 @@ int main()
             {
                 playerSide = side::LEFT;
                 score++;
+                chop.play();
 
                 timeRemaining += (2.0f /score) + 0.15f;
 
@@ -484,6 +503,21 @@ int main()
                         logActive = false;
                         spriteLog.setPosition(810,720);
                     }
+
+                if(branchPositions[5] == playerSide)
+                {
+                    // death
+                    paused = true;
+                    acceptInput = false;
+
+                    spriteRip.setPosition(525,760);
+                    spritePlayer.setPosition(2000,600);
+                    death.play();
+
+
+                    messageText.setString("Game Over youve been Squished!");
+
+                }
             }
             
         }

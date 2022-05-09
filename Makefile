@@ -4,7 +4,7 @@
 #################################################
 
 c++ = g++	#use the gnu compiler
-libs = -lsfml-graphics -lsfml-window -lsfml-system
+libs = -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system
 flags = -g -Wall -Wextra -std=c++17
 
 timber: main.o
